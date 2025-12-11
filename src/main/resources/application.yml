@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: nudg-api
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+    hikari:
+      idle-timeout: 300
+      max-lifetime: 300
+      maximum-pool-size: 10
+  jpa:
+    hibernate:
+      dialect: org.hibernate.dialect.MySQL8Dialect
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        jdbc.lob.non_contextual_creation: true
+        id:
+          db_structure_naming_strategy: single
+  jackson:
+    default-property-inclusion: non_null
+  cache:
+    type: caffeine
+    cache-names: sessions, token-blacklist
+    caffeine:
+      spec: maximumSize=10000,expireAfterWrite=30m
