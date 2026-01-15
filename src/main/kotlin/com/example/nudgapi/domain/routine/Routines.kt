@@ -7,8 +7,6 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import org.springframework.data.annotation.CreatedDate
-import java.time.LocalDateTime
 import java.time.LocalTime
 
 @Entity
@@ -17,23 +15,32 @@ class Routines (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
+
     @Column(nullable = false)
-    var user_id: Long,
+    var userId: Long,
+
     @Column(nullable = false)
     var title: String,
+
     @Column(nullable = true)
-    var emoji: String?=null,
+    var emoji: String? = null,
+
     @Column(nullable = true)
-    var duration_minutes: Int?=null,
+    var durationMinutes: Int? = null,
+
     @Column(name = "start_time")
     var startTime: LocalTime? = null,
+
     @Column(nullable = true)
-    var repeat_days: String?=null,
+    var recurrenceRule: String? = null, // e.g., "RRULE:FREQ=WEEKLY;BYDAY=MO,WE,FR"
+
     @Column(nullable = true)
-    var notification_type: String?=null,
+    var notificationType: String? = null,
+
     @Column(nullable = true)
-    var notification_message: String?=null,
+    var notificationMessage: String? = null,
+
     @Column(nullable = true)
-    var is_active: Boolean?=null,
-): BaseEntity(){
-}
+    var isActive: Boolean? = null,
+
+): BaseEntity()

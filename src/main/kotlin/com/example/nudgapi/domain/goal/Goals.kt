@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import java.time.LocalDate
 
 @Entity
 @Table(name = "goals")
@@ -14,14 +15,28 @@ class Goals(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
+
     @Column(nullable = false)
-    var user_id: Long,
+    var userId: Long,
+
+    @Column(nullable = true)
+    var parentGoalId: Long? = null,
+
     @Column(nullable = false)
     var title: String,
+
+    @Column(columnDefinition = "TEXT")
+    var description: String? = null,
+
     @Column(nullable = true)
-    var color: String?=null,
+    var status: String? = "todo", // 'todo', 'in_progress', 'done', 'archived'
+
     @Column(nullable = true)
-    var status: String?=null,
+    var dueDate: LocalDate? = null,
+
+    @Column(nullable = true)
+    var color: String? = null,
+
 ): BaseEntity() {
 
 }
