@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    # 테스트는 H2 인메모리 DB 사용 (환경변수 없이 직접 입력)
+    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      # 메인 설정의 MySQL8Dialect를 H2에 맞게 덮어쓰기
+      dialect: org.hibernate.dialect.H2Dialect
+      ddl-auto: create-drop # 테스트 시작 시 생성, 종료 시 삭제
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+
+  # 캐시 등 다른 설정도 필요하다면 테스트용으로 간단히 설정
+  cache:
+    type: none
