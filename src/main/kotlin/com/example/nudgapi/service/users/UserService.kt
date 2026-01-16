@@ -21,13 +21,13 @@ class UserService(
     fun getUser(userId: Long): UserResponse {
         val user = userRepository.findByIdOrNull(userId) ?: throw RuntimeException("User not found")
 
-        val cbtRecords = cbtRecordRepository.findByUser_id(userId).map {
+        val cbtRecords = cbtRecordRepository.findByUserId(userId).map {
             CbtRecordDto(
                 id = it.id,
-                userId = it.user_id,
-                recordedAt = it.recorded_at,
-                moodScore = it.mood_score,
-                moodLabel = it.mood_label,
+                userId = it.userId,
+                recordedAt = it.recordedAt,
+                moodScore = it.moodScore,
+                moodLabel = it.moodLabel,
                 emoji = it.emoji,
                 impulse = it.impulse,
                 copingMethod = it.coping_method,
@@ -38,9 +38,10 @@ class UserService(
         }
 
         val goals = goalsRepository.findByUserId(userId).map { goal ->
-            val tags = goal.id?.let { goalId ->
-                goalTagRepository.findByGoal_id(goalId).map { it.tag_name }
+            val tags: List<String> = goal.id?.let { goalId ->
+                goalTagRepository.findByGoalId(goalId).map { it.tagName }
             } ?: emptyList()
+
             GoalDto(
                 id = goal.id,
                 userId = goal.userId,

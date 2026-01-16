@@ -14,9 +14,12 @@ class GoalTag (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
-    @Column(nullable = false)
-    var goal_id: Long,
-    @Column(nullable = false)
-    var tag_name: String,
+    // [수정] goal_id -> goalId (DB 컬럼명은 name 속성으로 지정)
+    @Column(name = "goal_id", nullable = false)
+    var goalId: Long,
+
+    // [수정] tag_name -> tagName (통일성을 위해 같이 수정 권장)
+    @Column(name = "tag_name", nullable = false)
+    var tagName: String,
 ): BaseEntity() {
 }

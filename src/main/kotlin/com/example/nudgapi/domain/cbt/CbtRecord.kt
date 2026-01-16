@@ -16,26 +16,36 @@ class CbtRecord (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
-    @Column(nullable = false)
-    var user_id: Long,
+
+    @Column(name = "user_id", nullable = false)
+    var userId: Long,
+
     @CreatedDate
-    @Column(nullable = true, updatable = false)
-    var recorded_at: LocalDateTime?=null,
-    @Column(nullable = false)
-    var mood_score: Int,
+    @Column(name = "recorded_at", nullable = true, updatable = false)
+    var recordedAt: LocalDateTime? = null,
+
+    @Column(name = "mood_score", nullable = false)
+    var moodScore: Int,
+
+    @Column(name = "mood_label", nullable = true)
+    var moodLabel: String? = null,
+
     @Column(nullable = true)
-    var mood_label: String?=null,
+    var emoji: String? = null,
+
     @Column(nullable = true)
-    var emoji: String?=null,
+    var impulse: String? = null,
+
+    @Column(name = "coping_method", nullable = true)
+    var copingMethod: String? = null,
+
     @Column(nullable = true)
-    var impulse: String?=null,
+    var location: String? = null,
+
+    @Column(name = "result_status", nullable = true)
+    var resultStatus: String? = null,
+    
     @Column(nullable = true)
-    var coping_method: String?=null,
-    @Column(nullable = true)
-    var location: String?=null,
-    @Column(nullable = true)
-    var result_status: String?=null,
-    @Column(nullable = true)
-    var notes: String?=null,
+    var notes: String? = null,
 ): BaseEntity(){
 }
