@@ -22,9 +22,6 @@ data class UpdateCbtEntryRequest(
     val notes: String?
 )
 
-import java.time.LocalDate
-import java.time.LocalTime
-
 data class CbtEntryResponse(
     val id: Long?,
     val date: LocalDate?,
@@ -72,7 +69,34 @@ data class CbtEntryDetailResponse(
     val notes: String?,
     val createdAt: String?,
     val updatedAt: String?
-)
+) {
+    companion object {
+        private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+
+        fun fromDetail(record: CbtRecord): CbtEntryDetailResponse {
+            return CbtEntryDetailResponse(
+                id = record.id,
+                date = record.recordedAt?.format(dateFormatter),
+                time = record.recordedAt?.format(timeFormatter),
+                emoji = record.emoji,
+                mood = record.moodLabel,
+                moodScore = record.moodScore,
+                moodColor = "green",
+                title = "CBT Record",
+                impulse = record.impulse,
+                copingMethod = record.copingMethod,
+
+                location = record.location,
+                result = record.resultStatus,
+
+                notes = record.notes,
+                createdAt = record.createdDate.toString(),
+                updatedAt = record.updatedDate.toString()
+            )
+        }
+    }
+}
 
 data class CbtStatisticsResponse(
     val totalEntries: Int,

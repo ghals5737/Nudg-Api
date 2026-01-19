@@ -14,7 +14,8 @@ class UserService(
     private val goalsRepository: GoalsRepository,
     private val goalTagRepository: GoalTagRepository,
     private val routinesRepository: RoutinesRepository,
-    private val taskRepository: TaskRepository
+    private val taskRepository: TaskRepository,
+    private val scheduleRepository: ScheduleRepository
 ) {
 
     @Transactional(readOnly = true)
@@ -30,9 +31,9 @@ class UserService(
                 moodLabel = it.moodLabel,
                 emoji = it.emoji,
                 impulse = it.impulse,
-                copingMethod = it.coping_method,
+                copingMethod = it.copingMethod,
                 location = it.location,
-                resultStatus = it.result_status,
+                resultStatus = it.resultStatus,
                 notes = it.notes
             )
         }
@@ -60,7 +61,7 @@ class UserService(
                     TaskDto(
                         id = task.id,
                         name = task.title,
-                        isCompleted = task.status == "completed"
+                        isCompleted = task.completed
                     )
                 }
             } ?: emptyList()
@@ -82,16 +83,16 @@ class UserService(
             )
         }
 
-        val schedules = taskRepository.findByUserId(userId).map {
+        val schedules = scheduleRepository.findByUserId(userId).map {
             ScheduleDto(
                 id = it.id,
                 userId = it.userId,
                 title = it.title,
-                description = it.title, // No description field in Task entity
-                isCompleted = it.status == "completed",
-                isAllDay = false, // No isAllDay field in Task entity
-                startDateTime = it.startTime,
-                endDateTime = it.endTime
+                description = it.title,
+                isCompleted = false, // Schedule entity does not have a 'completed' status
+                isAllDay = false,
+                startDateTime = it.date.atTime(it.startTime),
+                endDateTime = it.date.atTime(it.endTime)
             )
         }
 
