@@ -37,4 +37,4 @@ out/
 
 ### Kotlin ###
 .kotlin
-.start.sh
+start.sh
