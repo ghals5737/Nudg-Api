@@ -2,6 +2,7 @@ package com.example.nudgapi.controller
 
 import com.example.nudgapi.dto.ApiResponse
 import com.example.nudgapi.dto.LoginRequest
+import com.example.nudgapi.dto.RefreshRequest
 import com.example.nudgapi.dto.SignupRequest
 import com.example.nudgapi.security.AuthPrincipal
 import com.example.nudgapi.service.AuthService
@@ -19,6 +20,9 @@ class AuthController(private val authService: AuthService) {
 
     @PostMapping("/login")
     fun login(@RequestBody req: LoginRequest) = authService.login(req)
+
+    @PostMapping("/refresh")
+    fun refresh(@RequestBody req: RefreshRequest) = authService.refresh(req)
 
     @PostMapping("/logout")
     @ResponseStatus(HttpStatus.NO_CONTENT)

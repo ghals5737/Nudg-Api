@@ -65,6 +65,7 @@ data class UpdateGoalRequest(
     val iconColor: String? = null,
     val progressColor: String? = null,
     val progress: Int? = null,
+    val steps: List<String>? = null,
 )
 
 data class UpdateGoalStepRequest(val done: Boolean)

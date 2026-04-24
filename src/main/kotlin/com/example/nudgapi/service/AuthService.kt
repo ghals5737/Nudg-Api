@@ -4,6 +4,7 @@ import com.example.nudgapi.domain.RefreshToken
 import com.example.nudgapi.domain.User
 import com.example.nudgapi.dto.AuthResponse
 import com.example.nudgapi.dto.LoginRequest
+import com.example.nudgapi.dto.RefreshRequest
 import com.example.nudgapi.dto.SignupRequest
 import com.example.nudgapi.dto.UserResponse
 import com.example.nudgapi.exception.BadRequestException
@@ -48,20 +49,41 @@ class AuthService(
     @Transactional
     fun logout(userId: Long) = refreshTokenRepository.revokeAllByUserId(userId)
 
+    @Transactional
+    fun refresh(req: RefreshRequest): AuthResponse {
+        val token = refreshTokenRepository.findByTokenHashAndRevokedFalse(req.refreshToken)
+            ?: throw BadRequestException("Invalid or expired refresh token")
+        if (token.expiresAt.isBefore(Instant.now())) {
+            token.revoked = true
+            refreshTokenRepository.save(token)
+            throw BadRequestException("Refresh token expired")
+        }
+        token.revoked = true
+        refreshTokenRepository.save(token)
+        val user = userRepository.findById(token.userId).orElseThrow { BadRequestException("User not found") }
+        return buildAuthResponse(user)
+    }
+
     @Transactional(readOnly = true)
     fun me(userId: Long): UserResponse =
         UserResponse.from(userRepository.findById(userId).orElseThrow { BadRequestException("User not found") })
 
+    fun buildAuthResponseByEmail(email: String): AuthResponse? {
+        val user = userRepository.findByEmail(email) ?: return null
+        return buildAuthResponse(user)
+    }
+
     private fun buildAuthResponse(user: User): AuthResponse {
         val uid = user.id!!
         val accessToken = jwtUtil.generateAccessToken(uid)
+        val rawToken = UUID.randomUUID().toString()
         refreshTokenRepository.save(
             RefreshToken(
                 userId = uid,
-                tokenHash = passwordEncoder.encode(UUID.randomUUID().toString())!!,
+                tokenHash = rawToken,
                 expiresAt = Instant.now().plusSeconds(refreshTokenExpiry),
             )
         )
-        return AuthResponse(user = UserResponse.from(user), accessToken = accessToken)
+        return AuthResponse(user = UserResponse.from(user), accessToken = accessToken, refreshToken = rawToken)
     }
 }

@@ -34,4 +34,5 @@ data class UserResponse(
     }
 }
 
-data class AuthResponse(val user: UserResponse, val accessToken: String)
+data class AuthResponse(val user: UserResponse, val accessToken: String, val refreshToken: String)
+data class RefreshRequest(val refreshToken: String)

@@ -58,7 +58,20 @@ class GoalService(
         req.progressColor?.let { goal.progressColor = it }
         req.progress?.let { goal.progress = it }
         val saved = goalRepository.save(goal)
-        return GoalResponse.from(saved, goalStepRepository.findAllByGoalIdOrderByOrderIdxAsc(goalId))
+
+        val steps = if (req.steps != null) {
+            val existing = goalStepRepository.findAllByGoalIdOrderByOrderIdxAsc(goalId)
+                .associateBy { it.label }
+            goalStepRepository.deleteAllByGoalId(goalId)
+            req.steps.mapIndexed { idx, label ->
+                val done = existing[label]?.done ?: false
+                goalStepRepository.save(GoalStep(goalId = goalId, label = label, done = done, orderIdx = idx))
+            }
+        } else {
+            goalStepRepository.findAllByGoalIdOrderByOrderIdxAsc(goalId)
+        }
+
+        return GoalResponse.from(saved, steps)
     }
 
     @Transactional
