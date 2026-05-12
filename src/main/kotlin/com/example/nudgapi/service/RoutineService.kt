@@ -86,6 +86,28 @@ class RoutineService(
         routineLogRepository.save(RoutineLog(routineId = routineId, userId = userId, logDate = date))
     }
 
+    @Transactional
+    fun unlog(userId: Long, routineId: Long, date: String) {
+        findOwned(userId, routineId)
+        val parsed = LocalDate.parse(date)
+        if (routineLogRepository.deleteByRoutineIdAndLogDate(routineId, parsed) == 0L)
+            throw NotFoundException("No log found for this date")
+    }
+
+    @Transactional(readOnly = true)
+    fun today(userId: Long): TodayRoutinesResponse {
+        val today = LocalDate.now()
+        val dow = today.dayOfWeek.value - 1
+        val loggedIds = routineLogRepository.findAllByUserIdAndLogDate(userId, today)
+            .filter { it.completed }
+            .map { it.routineId }
+            .toSet()
+        val items = routineRepository.findAllByUserIdOrderByCreatedAtAsc(userId)
+            .filter { it.active && it.getDaysList().getOrElse(dow) { false } }
+            .map { TodayRoutineItem(routine = RoutineResponse.from(it), completed = it.id in loggedIds) }
+        return TodayRoutinesResponse(items, RoutineProgress(items.count { it.completed }, items.size))
+    }
+
     @Transactional(readOnly = true)
     fun rhythm(userId: Long, routineId: Long, days: Int): RoutineRhythmResponse {
         findOwned(userId, routineId)

@@ -8,4 +8,5 @@ interface RoutineLogRepository : JpaRepository<RoutineLog, Long> {
     fun findAllByRoutineIdAndLogDateBetween(routineId: Long, from: LocalDate, to: LocalDate): List<RoutineLog>
     fun existsByRoutineIdAndLogDate(routineId: Long, logDate: LocalDate): Boolean
     fun findAllByUserIdAndLogDate(userId: Long, logDate: LocalDate): List<RoutineLog>
+    fun deleteByRoutineIdAndLogDate(routineId: Long, logDate: LocalDate): Long
 }

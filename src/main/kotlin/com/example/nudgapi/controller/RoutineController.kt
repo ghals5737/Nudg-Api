@@ -14,6 +14,9 @@ class RoutineController(private val routineService: RoutineService) {
     @GetMapping
     fun list(@AuthenticationPrincipal p: AuthPrincipal) = ApiResponse(routineService.list(p.userId))
 
+    @GetMapping("/today")
+    fun today(@AuthenticationPrincipal p: AuthPrincipal) = ApiResponse(routineService.today(p.userId))
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun create(@AuthenticationPrincipal p: AuthPrincipal, @RequestBody req: CreateRoutineRequest) =
@@ -39,6 +42,11 @@ class RoutineController(private val routineService: RoutineService) {
     @PostMapping("/{routineId}/log")
     fun log(@AuthenticationPrincipal p: AuthPrincipal, @PathVariable routineId: Long, @RequestBody req: RoutineLogRequest) =
         routineService.log(p.userId, routineId, req)
+
+    @DeleteMapping("/{routineId}/log")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun unlog(@AuthenticationPrincipal p: AuthPrincipal, @PathVariable routineId: Long, @RequestParam date: String) =
+        routineService.unlog(p.userId, routineId, date)
 
     @GetMapping("/{routineId}/rhythm")
     fun rhythm(@AuthenticationPrincipal p: AuthPrincipal, @PathVariable routineId: Long, @RequestParam(defaultValue = "7") days: Int) =

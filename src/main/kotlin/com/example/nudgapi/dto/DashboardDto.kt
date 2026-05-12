@@ -4,6 +4,7 @@ import java.time.LocalDate
 
 data class TodayRoutineItem(val routine: RoutineResponse, val completed: Boolean)
 data class RoutineProgress(val completed: Int, val total: Int)
+data class TodayRoutinesResponse(val items: List<TodayRoutineItem>, val progress: RoutineProgress)
 
 data class DashboardResponse(
     val greeting: String,
