@@ -1,0 +1,39 @@
+name: Build and Deploy on Tag
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker registry
+        run: echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login https://registry.booknote.site -u "${{ secrets.REGISTRY_USERNAME }}" --password-stdin
+
+      - name: Build & push Docker image
+        # Spring Boot 백엔드는 빌드 시점에 굳혀야 할 시크릿이 없음.
+        # DB_*, JWT_SECRET, GOOGLE_CLIENT_* 등은 배포 서버에서 컨테이너 env 로 런타임 주입.
+        run: |
+          docker buildx build . \
+            -t registry.booknote.site/nudg-api:latest \
+            -t registry.booknote.site/nudg-api:${{ github.ref_name }} \
+            --push
+
+      - name: Send POST request to webhook
+        run: |
+          curl -X POST https://webhook.booknote.site \
+            -H "Content-Type: application/json" \
+            -d '{"status": "success", "message": "Deployment completed for tag ${{ github.ref_name }}", "authKey": "${{ secrets.WEBHOOK_AUTH_KEY }}", "serviceName": "NudgApi"}'
+
+      - name: Logout from Docker registry
+        if: always()
+        run: docker logout registry.booknote.site
