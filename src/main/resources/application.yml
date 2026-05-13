@@ -40,6 +40,9 @@ jwt:
   access-token-expiry: 900
   refresh-token-expiry: 604800
 
+app:
+  frontend-url: ${FRONTEND_URL:http://localhost:3000}
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html

@@ -3,6 +3,7 @@ package com.example.nudgapi.security
 import com.example.nudgapi.service.AuthService
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Lazy
 import org.springframework.security.core.Authentication
 import org.springframework.security.oauth2.core.oidc.user.OidcUser
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component
 @Component
 class OAuth2AuthenticationSuccessHandler(
     @Lazy private val authService: AuthService,
+    @Value("\${app.frontend-url}") private val frontendUrl: String,
 ) : SimpleUrlAuthenticationSuccessHandler() {
 
     override fun onAuthenticationSuccess(
@@ -30,8 +32,9 @@ class OAuth2AuthenticationSuccessHandler(
             return
         }
 
+        val base = frontendUrl.trimEnd('/')
         response.sendRedirect(
-            "http://localhost:3000/login?token=${authResponse.accessToken}&refreshToken=${authResponse.refreshToken}"
+            "$base/login?token=${authResponse.accessToken}&refreshToken=${authResponse.refreshToken}"
         )
     }
 }
