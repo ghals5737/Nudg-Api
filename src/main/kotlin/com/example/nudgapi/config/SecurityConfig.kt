@@ -33,7 +33,7 @@ class SecurityConfig(
                     "/api/auth/signup", "/api/auth/login", "/api/auth/refresh",
                     "/swagger-ui.html", "/swagger-ui/**", "/api-docs/**",
                     "/h2-console/**",
-                    "/login/oauth2/**", "/oauth2/**",
+                    "/api/oauth2/**", "/api/login/oauth2/**",
                 ).permitAll()
                 it.anyRequest().authenticated()
             }
@@ -45,6 +45,8 @@ class SecurityConfig(
                 }
             }
             .oauth2Login {
+                it.authorizationEndpoint { ep -> ep.baseUri("/api/oauth2/authorization") }
+                it.redirectionEndpoint { ep -> ep.baseUri("/api/login/oauth2/code/*") }
                 it.userInfoEndpoint { endpoint -> endpoint.oidcUserService(oAuth2UserService) }
                 it.successHandler(oAuth2AuthenticationSuccessHandler)
             }
